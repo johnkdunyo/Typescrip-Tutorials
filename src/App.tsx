@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import InputField from './components/InputField';
 import TodoList from './components/TodoList';
 import {Todo } from './model'
+import {DragDropContext, DropResult} from 'react-beautiful-dnd'
 
 // let name: String;
 // let age: string | number;
@@ -53,12 +54,18 @@ const App : React.FC =()  => {
     
   }
 
+  const onDragEnd = (result: DropResult) => {
+    console.log(result)
+  }
+
   return (
+    <DragDropContext onDragEnd={onDragEnd}>
     <div className="App">
       <span className='heading'>Taskify</span>
       <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
       <TodoList  todos={todos} setTodos={setTodos}/>
     </div>
+    </DragDropContext>
   );
 }
 

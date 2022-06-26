@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Draggable } from 'react-beautiful-dnd';
 import { BiEditAlt} from 'react-icons/bi';
 import {MdDeleteForever, MdDownloadDone} from 'react-icons/md';
 
@@ -8,13 +9,14 @@ import TodoList from './TodoList';
 interface Props {
     todo: Todo,
     todos: Todo [],
-    setTodos: React.Dispatch<React.SetStateAction<Todo[]>>
+    setTodos: React.Dispatch<React.SetStateAction<Todo[]>>,
+    index: number
 
 }
 
 
 
-const SingleTodo: React.FC<Props>= ({todo, todos, setTodos}) => {
+const SingleTodo: React.FC<Props>= ({index, todo, todos, setTodos}) => {
 
   const [editMode, setEditMode] = useState<boolean> (false)
   const [editTodoText, setEditTodoText] = useState<string>(todo.todo)
@@ -54,26 +56,33 @@ const SingleTodo: React.FC<Props>= ({todo, todos, setTodos}) => {
 
 
   return (
-    <form
-    className='todos__single'
-    onSubmit={e=>handleForm(e, todo.id)}
-    >
-      {editMode ? <input ref={inputRef} value={editTodoText} onChange={e=>setEditTodoText(e.target.value)} className='todos__single--text'/> :
-      
-      todo.isDone ? <s className="todos__single--text">{todo.todo}</s> : <span className="todos__single--text">{todo.todo}</span>}
-     
-     
-
-      <div>
-        <span className="icon" onClick={()=>{
-          setEditMode(prev=>!prev)
-
-        }}> <BiEditAlt/></span>
-        <span className="icon" onClick={()=>onClickDelete(todo.id)}> <MdDeleteForever /></span>
-        <span className="icon" onClick={()=>onClickDone(todo.id)}> <MdDownloadDone /> </span>
-      </div>
-
-    </form>
+   <Draggable draggableId={todo.id.toString()} index={index}>
+    {(provided)=>(
+       <form
+       className='todos__single'
+       onSubmit={e=>handleForm(e, todo.id)}
+       ref={provided.innerRef}
+       {...provided.draggableProps}
+       {...provided.dragHandleProps}
+       >
+         {editMode ? <input ref={inputRef} value={editTodoText} onChange={e=>setEditTodoText(e.target.value)} className='todos__single--text'/> :
+         
+         todo.isDone ? <s className="todos__single--text">{todo.todo}</s> : <span className="todos__single--text">{todo.todo}</span>}
+        
+        
+   
+         <div>
+           <span className="icon" onClick={()=>{
+             setEditMode(prev=>!prev)
+   
+           }}> <BiEditAlt/></span>
+           <span className="icon" onClick={()=>onClickDelete(todo.id)}> <MdDeleteForever /></span>
+           <span className="icon" onClick={()=>onClickDone(todo.id)}> <MdDownloadDone /> </span>
+         </div>
+   
+       </form>
+    )}
+   </Draggable>
     
   )
 }
